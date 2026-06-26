@@ -372,7 +372,7 @@ async fn main() {
 		Box::pin(async move {
 			let sub = req.param("sub").unwrap_or_default();
 			match req.param("id").as_deref() {
-				// Share link
+				// Subreddit post share link
 				Some(id) if (8..12).contains(&id.len()) => match canonical_path(format!("/r/{sub}/s/{id}"), 3).await {
 					Ok(Some(path)) => Ok(redirect(&path)),
 					Ok(None) => error(req, "Post ID is invalid. It may point to a post on a community that has been banned.").await,
