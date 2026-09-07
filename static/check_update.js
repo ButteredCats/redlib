@@ -22,6 +22,8 @@ async function checkInstanceUpdateStatus() {
             } else if (commitIndex > 0) {
                 statusMessage = `⚠️ This instance is not up to date and is ${commitIndex} commits old. Test and confirm on an up-to-date instance before reporting.`;
                 document.getElementById('error-446').remove();
+            } else if (commitIndex < 0) {
+                statusMessage = `⚠️ This instance is using a fork. Test and confirm on an up-to-date instance that's using the original repository before reporting.`;
             } else {
                 statusMessage = `⚠️ This instance is not up to date and is at least ${commitHashes.length} commits old. Test and confirm on an up-to-date instance before reporting.`;
                 document.getElementById('error-446').remove();
