@@ -19,12 +19,6 @@ use wreq::redirect::Policy;
 use wreq::{header as wreq_header, Client as WreqClient, EmulationFactory, Method, Response as WreqResponse};
 use wreq_util::{Emulation, EmulationOS, EmulationOption};
 
-// const REDDIT_URL_BASE: &str = "https://oauth.reddit.com";
-//const REDDIT_URL_BASE_HOST: &str = "oauth.reddit.com";
-// 
-// const REDDIT_TOR_URL_BASE: &str = "https://oauth.reddittorjg6rue252oqsxryoxengawnmo46qy4kyii5wtqnwfj4ooad.onion";
-// const REDDIT_TOR_URL_BASE_HOST: &str = "oauth.reddittorjg6rue252oqsxryoxengawnmo46qy4kyii5wtqnwfj4ooad.onion";
-
 const REDDIT_SHORT_URL_BASE: &str = "https://redd.it";
 const REDDIT_SHORT_URL_BASE_HOST: &str = "redd.it";
 
