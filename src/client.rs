@@ -1,6 +1,7 @@
 use crate::dbg_msg;
 use crate::oauth::{force_refresh_token, token_daemon, Oauth, OauthBackendImpl};
 use crate::server::RequestExt;
+use crate::utils;
 use crate::utils::{format_url, Post};
 use arc_swap::ArcSwap;
 use cached::proc_macro::cached;
@@ -18,8 +19,11 @@ use wreq::redirect::Policy;
 use wreq::{header as wreq_header, Client as WreqClient, EmulationFactory, Method, Response as WreqResponse};
 use wreq_util::{Emulation, EmulationOS, EmulationOption};
 
-const REDDIT_URL_BASE: &str = "https://oauth.reddit.com";
-const REDDIT_URL_BASE_HOST: &str = "oauth.reddit.com";
+// const REDDIT_URL_BASE: &str = "https://oauth.reddit.com";
+//const REDDIT_URL_BASE_HOST: &str = "oauth.reddit.com";
+// 
+// const REDDIT_TOR_URL_BASE: &str = "https://oauth.reddittorjg6rue252oqsxryoxengawnmo46qy4kyii5wtqnwfj4ooad.onion";
+// const REDDIT_TOR_URL_BASE_HOST: &str = "oauth.reddittorjg6rue252oqsxryoxengawnmo46qy4kyii5wtqnwfj4ooad.onion";
 
 const REDDIT_SHORT_URL_BASE: &str = "https://redd.it";
 const REDDIT_SHORT_URL_BASE_HOST: &str = "redd.it";
@@ -148,7 +152,7 @@ pub async fn canonical_path(path: String, tries: i8) -> Result<Option<String>, S
 			res
 				.headers()
 				.get(wreq_header::LOCATION)
-				.map(|val| percent_encode(val.as_bytes(), CONTROLS).to_string().trim_start_matches(REDDIT_URL_BASE).to_string()),
+				.map(|val| percent_encode(val.as_bytes(), CONTROLS).to_string().trim_start_matches(utils::get_reddit_url_base()).to_string()),
 		),
 	}
 }
@@ -212,7 +216,7 @@ pub async fn proxy(req: HyperRequest<Body>, format: &str) -> Result<HyperRespons
 /// Makes a GET request to Reddit at `path`. By default, this will honor HTTP
 /// 3xx codes Reddit returns and will automatically redirect.
 fn reddit_get(path: String, quarantine: bool) -> Boxed<Result<WreqResponse, String>> {
-	request(&Method::GET, path, true, quarantine, REDDIT_URL_BASE, REDDIT_URL_BASE_HOST)
+	request(&Method::GET, path, true, quarantine, utils::get_reddit_url_base(), utils::get_reddit_url_base_host())
 }
 
 /// Makes a HEAD request to Reddit at `path, using the short URL base. This will not follow redirects.
@@ -291,7 +295,7 @@ fn request(method: &'static Method, path: String, redirect: bool, quarantine: bo
 								//     2. Percent-encode the path.
 								let new_path = percent_encode(val.as_bytes(), CONTROLS)
 									.to_string()
-									.trim_start_matches(REDDIT_URL_BASE)
+									.trim_start_matches(utils::get_reddit_url_base())
 									.trim_start_matches(ALTERNATIVE_REDDIT_URL_BASE)
 									.to_string();
 								format!("{new_path}{}raw_json=1", if new_path.contains('?') { "&" } else { "?" })
@@ -309,7 +313,7 @@ fn request(method: &'static Method, path: String, redirect: bool, quarantine: bo
 				Ok(response)
 			}
 			Err(e) => {
-				dbg_msg!("{method} {REDDIT_URL_BASE}{path}: {}", e);
+				dbg_msg!("{method} {}{path}: {}", utils::get_reddit_url_base(), e);
 
 				Err(e.to_string())
 			}
