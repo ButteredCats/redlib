@@ -1436,6 +1436,42 @@ pub fn get_reddit_url_base_host() -> &'static str {
 	};
 }
 
+// Returns the correct short Reddit url for either clearnet or Tor usage
+pub fn get_short_reddit_url_base() -> &'static str {
+	if using_tor() {
+		return "https://redditdotzhmh3mao6r5i2j7speppwqkizwo7vksy3mbz5iz7rlhocyd.onion";
+	} else {
+		return "https://www.redd.it";
+	};
+}
+
+// Returns the correct short Reddit domain for either clearnet or Tor usage
+pub fn get_short_reddit_url_base_host() -> &'static str {
+	if using_tor() {
+		return "redditdotzhmh3mao6r5i2j7speppwqkizwo7vksy3mbz5iz7rlhocyd.onion";
+	} else {
+		return "redd.it";
+	};
+}
+
+// Returns the correct alternative Reddit url for either clearnet or Tor usage
+pub fn get_alternative_reddit_url_base() -> &'static str {
+	if using_tor() {
+		return "https://www.reddittorjg6rue252oqsxryoxengawnmo46qy4kyii5wtqnwfj4ooad.onion";
+	} else {
+		return "https://www.reddit.com";
+	};
+}
+
+// Returns the correct alternative domain for either clearnet or Tor usage
+pub fn get_alternative_reddit_url_base_host() -> &'static str {
+	if using_tor() {
+		return "www.reddittorjg6rue252oqsxryoxengawnmo46qy4kyii5wtqnwfj4ooad.onion";
+	} else {
+		return "www.reddit.com";
+	};
+}
+
 /// Determines if a request should redirect to a NSFW landing gate.
 pub fn should_be_nsfw_gated(req: &Request<Body>, _req_url: &str) -> bool {
 	(setting(req, "show_nsfw") != "on") || sfw_only()

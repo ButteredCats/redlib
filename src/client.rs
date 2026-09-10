@@ -19,12 +19,6 @@ use wreq::redirect::Policy;
 use wreq::{header as wreq_header, Client as WreqClient, EmulationFactory, Method, Response as WreqResponse};
 use wreq_util::{Emulation, EmulationOS, EmulationOption};
 
-const REDDIT_SHORT_URL_BASE: &str = "https://redd.it";
-const REDDIT_SHORT_URL_BASE_HOST: &str = "redd.it";
-
-const ALTERNATIVE_REDDIT_URL_BASE: &str = "https://www.reddit.com";
-const ALTERNATIVE_REDDIT_URL_BASE_HOST: &str = "www.reddit.com";
-
 pub static CLIENT: LazyLock<WreqClient> = LazyLock::new(build_client);
 
 pub static OAUTH_CLIENT: LazyLock<ArcSwap<Oauth>> = LazyLock::new(|| {
@@ -37,10 +31,10 @@ pub static OAUTH_RATELIMIT_REMAINING: AtomicU16 = AtomicU16::new(99);
 
 pub static OAUTH_IS_ROLLING_OVER: AtomicBool = AtomicBool::new(false);
 
-const URL_PAIRS: [(&str, &str); 2] = [
-	(ALTERNATIVE_REDDIT_URL_BASE, ALTERNATIVE_REDDIT_URL_BASE_HOST),
-	(REDDIT_SHORT_URL_BASE, REDDIT_SHORT_URL_BASE_HOST),
-];
+pub fn url_pairs() -> [(&'static str, &'static str); 2] {
+	return [(utils::get_alternative_reddit_url_base(), utils::get_alternative_reddit_url_base_host()),
+	(utils::get_short_reddit_url_base(), utils::get_short_reddit_url_base_host())]
+}
 
 pub fn build_client() -> WreqClient {
 	// Keeping this list short to aid in privacy.
@@ -87,7 +81,7 @@ pub async fn canonical_path(path: String, tries: i8) -> Result<Option<String>, S
 	let res = {
 		// for url base and host in URL_PAIRS, try reddit_short_head(path.clone(), true, url_base, url_base_host) and if it succeeds, set res. else, res = None
 		let mut res = None;
-		for (url_base, url_base_host) in URL_PAIRS {
+		for (url_base, url_base_host) in url_pairs() {
 			res = reddit_short_head(path.clone(), true, url_base, url_base_host).await.ok();
 			if let Some(res) = &res {
 				if !res.status().is_client_error() {
@@ -269,7 +263,7 @@ fn request(method: &'static Method, path: String, redirect: bool, quarantine: bo
 						return Ok(response);
 					};
 					let location_header = response.headers().get(wreq::header::LOCATION);
-					if location_header.and_then(|h| h.to_str().ok()) == Some(ALTERNATIVE_REDDIT_URL_BASE) {
+					if location_header.and_then(|h| h.to_str().ok()) == Some(utils::get_alternative_reddit_url_base()) {
 						return Err("Reddit response was invalid".to_string());
 					}
 					return request(
@@ -290,7 +284,7 @@ fn request(method: &'static Method, path: String, redirect: bool, quarantine: bo
 								let new_path = percent_encode(val.as_bytes(), CONTROLS)
 									.to_string()
 									.trim_start_matches(utils::get_reddit_url_base())
-									.trim_start_matches(ALTERNATIVE_REDDIT_URL_BASE)
+									.trim_start_matches(utils::get_alternative_reddit_url_base())
 									.to_string();
 								format!("{new_path}{}raw_json=1", if new_path.contains('?') { "&" } else { "?" })
 							})
