@@ -1421,7 +1421,6 @@ pub fn using_tor() -> bool {
 // Returns the correct oauth url for either clearnet or Tor usage
 pub fn get_reddit_url_base() -> &'static str {
 	if using_tor() {
-		println!("Tor");
 		return "https://oauth.reddittorjg6rue252oqsxryoxengawnmo46qy4kyii5wtqnwfj4ooad.onion";
 	} else {
 		return "https://oauth.reddit.com";
