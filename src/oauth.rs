@@ -11,7 +11,7 @@ use tokio::time::{error::Elapsed, timeout};
 
 const REDDIT_ANDROID_OAUTH_CLIENT_ID: &str = "ohXpoqrZYub1kg";
 
-const OAUTH_TIMEOUT: Duration = Duration::from_secs(5);
+const OAUTH_TIMEOUT: Duration = Duration::from_secs(15);
 
 // Response from OAuth backend authentication
 #[derive(Debug, Clone)]
