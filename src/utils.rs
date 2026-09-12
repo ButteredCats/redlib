@@ -1441,7 +1441,7 @@ pub fn get_short_reddit_url_base() -> &'static str {
 	if using_tor() {
 		return "https://redditdotzhmh3mao6r5i2j7speppwqkizwo7vksy3mbz5iz7rlhocyd.onion";
 	} else {
-		return "https://www.redd.it";
+		return "https://redd.it";
 	};
 }
 
