@@ -1,6 +1,7 @@
 use crate::{
 	client::{CLIENT, OAUTH_CLIENT, OAUTH_IS_ROLLING_OVER, OAUTH_RATELIMIT_REMAINING},
-	oauth_resources::ANDROID_APP_VERSION_LIST, utils::{self, get_oauth_timeout},
+	oauth_resources::ANDROID_APP_VERSION_LIST,
+	utils::{self, get_oauth_timeout},
 };
 use base64::{engine::general_purpose, Engine as _};
 use log::{error, info, trace, warn};
