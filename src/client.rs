@@ -32,8 +32,10 @@ pub static OAUTH_RATELIMIT_REMAINING: AtomicU16 = AtomicU16::new(99);
 pub static OAUTH_IS_ROLLING_OVER: AtomicBool = AtomicBool::new(false);
 
 pub fn url_pairs() -> [(&'static str, &'static str); 2] {
-	return [(utils::get_alternative_reddit_url_base(), utils::get_alternative_reddit_url_base_host()),
-	(utils::get_short_reddit_url_base(), utils::get_short_reddit_url_base_host())]
+	[
+		(utils::get_alternative_reddit_url_base(), utils::get_alternative_reddit_url_base_host()),
+		(utils::get_short_reddit_url_base(), utils::get_short_reddit_url_base_host()),
+	]
 }
 
 pub fn build_client() -> WreqClient {

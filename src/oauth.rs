@@ -1,6 +1,7 @@
 use crate::{
 	client::{CLIENT, OAUTH_CLIENT, OAUTH_IS_ROLLING_OVER, OAUTH_RATELIMIT_REMAINING},
-	oauth_resources::ANDROID_APP_VERSION_LIST, utils,
+	oauth_resources::ANDROID_APP_VERSION_LIST,
+	utils::{self, get_oauth_timeout},
 };
 use base64::{engine::general_purpose, Engine as _};
 use log::{error, info, trace, warn};
@@ -10,8 +11,6 @@ use tegen::tegen::TextGenerator;
 use tokio::time::{error::Elapsed, timeout};
 
 const REDDIT_ANDROID_OAUTH_CLIENT_ID: &str = "ohXpoqrZYub1kg";
-
-const OAUTH_TIMEOUT: Duration = Duration::from_secs(90);
 
 // Response from OAuth backend authentication
 #[derive(Debug, Clone)]
@@ -109,12 +108,12 @@ impl Oauth {
 				std::process::exit(1);
 			}
 
-			tokio::time::sleep(OAUTH_TIMEOUT).await;
+			tokio::time::sleep(get_oauth_timeout()).await;
 		}
 	}
 
 	async fn new_with_timeout_with_backend(mut backend: OauthBackendImpl) -> Result<Result<Self, AuthError>, Elapsed> {
-		timeout(OAUTH_TIMEOUT, async move {
+		timeout(get_oauth_timeout(), async move {
 			let response = backend.authenticate().await?;
 
 			// Build headers_map from backend headers + Authorization header
