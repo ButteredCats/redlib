@@ -1472,6 +1472,16 @@ pub fn get_alternative_reddit_url_base_host() -> &'static str {
 	};
 }
 
+// Returns the oauth timeout to use for either clearnet or Tor usage
+// There's another Duration import that isn't the correct one, so it needs to be fully defined
+pub fn get_oauth_timeout() -> core::time::Duration {
+	if using_tor() {
+		return core::time::Duration::from_secs(90);
+	} else {
+		return core::time::Duration::from_secs(5);
+	};
+}
+
 /// Determines if a request should redirect to a NSFW landing gate.
 pub fn should_be_nsfw_gated(req: &Request<Body>, _req_url: &str) -> bool {
 	(setting(req, "show_nsfw") != "on") || sfw_only()
