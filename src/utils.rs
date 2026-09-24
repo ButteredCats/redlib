@@ -226,9 +226,7 @@ impl Media {
 				("gif", &mp4["source"]["url"], None)
 			} else {
 				// Return the picture if the media is an image
-				if data["domain"] == "i.redd.it" {
-					("image", &data["url"], None)
-				} else if data["domain"] == "i.redditdotzhmh3mao6r5i2j7speppwqkizwo7vksy3mbz5iz7rlhocyd.onion" {
+				if data["domain"] == "i.redd.it" || data["domain"] == "i.redditdotzhmh3mao6r5i2j7speppwqkizwo7vksy3mbz5iz7rlhocyd.onion" {
 					("image", &data["url"], None)
 				} else {
 					("image", &preview["source"]["url"], None)
@@ -250,10 +248,7 @@ impl Media {
 			);
 
 			("gallery", &data["url"], None)
-		} else if data["is_reddit_media_domain"].as_bool().unwrap_or_default() && data["domain"] == "i.redd.it" {
-			// If this post contains a reddit media (image) URL.
-			("image", &data["url"], None)
-		} else if data["is_reddit_media_domain"].as_bool().unwrap_or_default() && data["domain"] == "i.redditdotzhmh3mao6r5i2j7speppwqkizwo7vksy3mbz5iz7rlhocyd.onion" {
+		} else if data["is_reddit_media_domain"].as_bool().unwrap_or_default() && (data["domain"] == "i.redd.it" || data["domain"] == "i.redditdotzhmh3mao6r5i2j7speppwqkizwo7vksy3mbz5iz7rlhocyd.onion") {
 			// If this post contains a reddit media (image) URL.
 			("image", &data["url"], None)
 		} else {
@@ -1421,65 +1416,65 @@ pub fn using_tor() -> bool {
 // Returns the correct oauth url for either clearnet or Tor usage
 pub fn get_reddit_url_base() -> &'static str {
 	if using_tor() {
-		return "https://oauth.reddittorjg6rue252oqsxryoxengawnmo46qy4kyii5wtqnwfj4ooad.onion";
+		"https://oauth.reddittorjg6rue252oqsxryoxengawnmo46qy4kyii5wtqnwfj4ooad.onion"
 	} else {
-		return "https://oauth.reddit.com";
-	};
+		"https://oauth.reddit.com"
+	}
 }
 
 // Returns the correct oauth domain for either clearnet or Tor usage
 pub fn get_reddit_url_base_host() -> &'static str {
 	if using_tor() {
-		return "oauth.reddittorjg6rue252oqsxryoxengawnmo46qy4kyii5wtqnwfj4ooad.onion";
+		"oauth.reddittorjg6rue252oqsxryoxengawnmo46qy4kyii5wtqnwfj4ooad.onion"
 	} else {
-		return "oauth.reddit.com";
-	};
+		"oauth.reddit.com"
+	}
 }
 
 // Returns the correct short Reddit url for either clearnet or Tor usage
 pub fn get_short_reddit_url_base() -> &'static str {
 	if using_tor() {
-		return "https://redditdotzhmh3mao6r5i2j7speppwqkizwo7vksy3mbz5iz7rlhocyd.onion";
+		"https://redditdotzhmh3mao6r5i2j7speppwqkizwo7vksy3mbz5iz7rlhocyd.onion"
 	} else {
-		return "https://redd.it";
-	};
+		"https://redd.it"
+	}
 }
 
 // Returns the correct short Reddit domain for either clearnet or Tor usage
 pub fn get_short_reddit_url_base_host() -> &'static str {
 	if using_tor() {
-		return "redditdotzhmh3mao6r5i2j7speppwqkizwo7vksy3mbz5iz7rlhocyd.onion";
+		"redditdotzhmh3mao6r5i2j7speppwqkizwo7vksy3mbz5iz7rlhocyd.onion"
 	} else {
-		return "redd.it";
-	};
+		"redd.it"
+	}
 }
 
 // Returns the correct alternative Reddit url for either clearnet or Tor usage
 pub fn get_alternative_reddit_url_base() -> &'static str {
 	if using_tor() {
-		return "https://www.reddittorjg6rue252oqsxryoxengawnmo46qy4kyii5wtqnwfj4ooad.onion";
+		"https://www.reddittorjg6rue252oqsxryoxengawnmo46qy4kyii5wtqnwfj4ooad.onion"
 	} else {
-		return "https://www.reddit.com";
-	};
+		"https://www.reddit.com"
+	}
 }
 
 // Returns the correct alternative domain for either clearnet or Tor usage
 pub fn get_alternative_reddit_url_base_host() -> &'static str {
 	if using_tor() {
-		return "www.reddittorjg6rue252oqsxryoxengawnmo46qy4kyii5wtqnwfj4ooad.onion";
+		"www.reddittorjg6rue252oqsxryoxengawnmo46qy4kyii5wtqnwfj4ooad.onion"
 	} else {
-		return "www.reddit.com";
-	};
+		"www.reddit.com"
+	}
 }
 
 // Returns the oauth timeout to use for either clearnet or Tor usage
 // There's another Duration import that isn't the correct one, so it needs to be fully defined
 pub fn get_oauth_timeout() -> core::time::Duration {
 	if using_tor() {
-		return core::time::Duration::from_secs(90);
+		core::time::Duration::from_secs(90)
 	} else {
-		return core::time::Duration::from_secs(5);
-	};
+		core::time::Duration::from_secs(5)
+	}
 }
 
 /// Determines if a request should redirect to a NSFW landing gate.
