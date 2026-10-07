@@ -111,6 +111,9 @@ pub struct Config {
 
 	#[serde(rename = "REDLIB_USE_TOR")]
 	pub(crate) use_tor: Option<String>,
+
+	#[serde(rename = "REDLIB_SOURCE_URL")]
+	pub(crate) source_url: Option<String>,
 }
 
 impl Config {
@@ -160,6 +163,7 @@ impl Config {
 			full_url: parse("REDLIB_FULL_URL"),
 			default_remove_default_feeds: parse("REDLIB_DEFAULT_REMOVE_DEFAULT_FEEDS"),
 			use_tor: parse("REDLIB_USE_TOR"),
+			source_url: parse("REDLIB_SOURCE_URL"),
 		}
 	}
 }
@@ -191,6 +195,7 @@ fn get_setting_from_config(name: &str, config: &Config) -> Option<String> {
 		"REDLIB_FULL_URL" => config.full_url.clone(),
 		"REDLIB_DEFAULT_REMOVE_DEFAULT_FEEDS" => config.default_remove_default_feeds.clone(),
 		"REDLIB_USE_TOR" => config.use_tor.clone(),
+		"REDLIB_SOURCE_URL" => config.source_url.clone(),
 		_ => None,
 	}
 }
@@ -266,6 +271,12 @@ mod tests {
 	#[sealed_test(env = [("REDLIB_DEFAULT_FILTERS", "news+bestof")])]
 	fn test_default_filters() {
 		assert_eq!(get_setting("REDLIB_DEFAULT_FILTERS"), Some("news+bestof".into()));
+	}
+
+	#[test]
+	#[sealed_test(env = [("REDLIB_SOURCE_URL", "https://example.com")])]
+	fn test_source_url() {
+		assert_eq!(get_setting("REDLIB_SOURCE_URL"), Some("https://example.com".into()));
 	}
 
 	#[test]

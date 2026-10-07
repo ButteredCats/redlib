@@ -1523,6 +1523,12 @@ pub fn get_oauth_timeout() -> core::time::Duration {
 	}
 }
 
+/// Returns the currently configured source code URL to display in the footer.
+/// Defaults to the upstream Github repository URL when not explicitly configured.
+pub fn get_source_url() -> String {
+	get_setting("REDLIB_SOURCE_URL").unwrap_or("https://github.com/redlib-org/redlib".into())
+}
+
 /// Determines if a request should redirect to a NSFW landing gate.
 pub fn should_be_nsfw_gated(req: &Request<Body>, _req_url: &str) -> bool {
 	(setting(req, "show_nsfw") != "on") || sfw_only()
