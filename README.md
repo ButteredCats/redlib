@@ -1,3 +1,16 @@
+# This is a fork
+This is a fork of Redlib used on https://redlib.catsarch.com
+
+It has the following pull requests merged:
+- https://github.com/redlib-org/redlib/pull/539
+- https://github.com/redlib-org/redlib/pull/542
+- https://github.com/redlib-org/redlib/pull/561
+- https://github.com/redlib-org/redlib/pull/568
+- https://github.com/redlib-org/redlib/pull/577
+  - This also required https://github.com/redlib-org/redlib/pull/549 to be merged
+
+---
+
 # Redlib
 
 > An alternative private front-end to Reddit, with its origins in [Libreddit](https://github.com/libreddit/libreddit).
