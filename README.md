@@ -2,12 +2,12 @@
 This is a fork of Redlib used on https://redlib.catsarch.com
 
 It has the following pull requests merged:
-- https://github.com/redlib-org/redlib/pull/539
-- https://github.com/redlib-org/redlib/pull/542
-- https://github.com/redlib-org/redlib/pull/561
-- https://github.com/redlib-org/redlib/pull/568
-- https://github.com/redlib-org/redlib/pull/577
-  - This also required https://github.com/redlib-org/redlib/pull/549 to be merged
+- https://github.com/redlib-org/redlib/pull/539 (Lazy load post images)
+- https://github.com/redlib-org/redlib/pull/542 (Prevent an out of bounds from trying to access comments[0].author.name when there are no comments)
+- https://github.com/redlib-org/redlib/pull/561 (Proxy and embed giphy gifs in comments)
+- https://github.com/redlib-org/redlib/pull/568 (Make source code URL in footer configurable)
+- https://github.com/redlib-org/redlib/pull/577 (Add option to use Reddit's onion service to avoid blocks)
+  - This also required https://github.com/redlib-org/redlib/pull/549 (support rich:video (transcoded external media) and CMAF format) to be merged
 
 ---
 
