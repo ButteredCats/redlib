@@ -1,6 +1,7 @@
-use hyper::{Body, Request, Response};
+use hyper::{Body, Request as HyperRequest, Response as HyperResponse};
 use serde_json::Value;
 use std::sync::LazyLock;
+use wreq::Request as WreqRequest;
 
 use crate::client::{proxy, CLIENT};
 use crate::server::RequestExt;
@@ -13,7 +14,7 @@ pub fn is_redgifs_domain(domain: &str) -> bool {
 }
 
 /// Handles both video IDs (redirects) and actual video files (proxies)
-pub async fn handler(req: Request<Body>) -> Result<Response<Body>, String> {
+pub async fn handler(req: HyperRequest<Body>) -> Result<HyperResponse<Body>, String> {
 	let path = req.param("path").unwrap_or_default();
 
 	if path.ends_with(".mp4") {
@@ -23,13 +24,13 @@ pub async fn handler(req: Request<Body>) -> Result<Response<Body>, String> {
 	match fetch_video_url(&format!("https://www.redgifs.com/watch/{}", path)).await.ok() {
 		Some(video_url) => {
 			let filename = video_url.strip_prefix("https://media.redgifs.com/").unwrap_or(&video_url);
-			Ok(Response::builder()
+			Ok(HyperResponse::builder()
 				.status(302)
 				.header("Location", format!("/redgifs/{}", filename))
 				.body(Body::empty())
 				.unwrap_or_default())
 		}
-		None => Ok(Response::builder().status(404).body("RedGifs video not found".into()).unwrap_or_default()),
+		None => Ok(HyperResponse::builder().status(404).body("RedGifs video not found".into()).unwrap_or_default()),
 	}
 }
 
@@ -44,8 +45,8 @@ async fn fetch_video_url(redgifs_url: &str) -> Result<String, String> {
 	let api_url = format!("https://api.redgifs.com/v2/gifs/{}?views=yes", video_id);
 
 	let req = create_request(&api_url, Some(&token))?;
-	let res = CLIENT.request(req).await.map_err(|e| e.to_string())?;
-	let body_bytes = hyper::body::to_bytes(res.into_body()).await.map_err(|e| e.to_string())?;
+	let res = CLIENT.execute(req).await.map_err(|e| e.to_string())?;
+	let body_bytes = res.bytes().await.map_err(|e| e.to_string())?;
 	let json: Value = serde_json::from_slice(&body_bytes).map_err(|e| e.to_string())?;
 
 	// Prefer HD, fallback to SD
@@ -73,8 +74,8 @@ async fn get_token() -> Result<String, String> {
 	}
 
 	let req = create_request("https://api.redgifs.com/v2/auth/temporary", None)?;
-	let res = CLIENT.request(req).await.map_err(|e| e.to_string())?;
-	let body_bytes = hyper::body::to_bytes(res.into_body()).await.map_err(|e| e.to_string())?;
+	let res = CLIENT.execute(req).await.map_err(|e| e.to_string())?;
+	let body_bytes = res.bytes().await.map_err(|e| e.to_string())?;
 	let json: Value = serde_json::from_slice(&body_bytes).map_err(|e| e.to_string())?;
 	let token = json["token"].as_str().map(String::from).ok_or_else(|| "No token in RedGifs response".to_string())?;
 
@@ -84,8 +85,8 @@ async fn get_token() -> Result<String, String> {
 	Ok(token)
 }
 
-fn create_request(url: &str, token: Option<&str>) -> Result<Request<Body>, String> {
-	let mut builder = hyper::Request::get(url)
+fn create_request(url: &str, token: Option<&str>) -> Result<WreqRequest, String> {
+	let mut builder = wreq::get(url)
 		.header("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
 		.header("referer", "https://www.redgifs.com/")
 		.header("origin", "https://www.redgifs.com")
@@ -95,5 +96,5 @@ fn create_request(url: &str, token: Option<&str>) -> Result<Request<Body>, Strin
 		builder = builder.header("Authorization", format!("Bearer {}", t));
 	}
 	
-	builder.body(Body::empty()).map_err(|e| e.to_string())
+	builder.build().map_err(|e| e.to_string())
 }
